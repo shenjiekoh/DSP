@@ -1,0 +1,54 @@
+clc;
+close;
+clear;
+
+hn = [-4, 1, -1, -2, 5, 6, 6, 5, -2, -1, 1, -4];
+N = length(hn);
+n = 0:N-1;
+w = 0:2*pi/600:2*pi;
+H = sum(hn'.*exp(-1i*w.*n'),1);
+figure(1);
+plot(w,abs(H));
+title('Magnitude of H(e^{j\omega})');
+xlabel('\omega');
+ylabel('|H(e^{j\omega}|');
+xlim([0,2*pi]);
+set(gca,'XTick',0:pi/2:2*pi);
+set(gca,'XTickLabel',{'0','\pi/2','\pi','3\pi/2','2\pi'});
+figure(2);
+plot(w,angle(H));
+title('Phase of H(e^{j\omega})');
+xlabel('\omega');
+ylabel('\angleH(e^{j\omega})');
+xlim([0,2*pi]);
+set(gca,'XTick',0:pi/2:2*pi);
+set(gca,'XTickLabel',{'0','\pi/2','\pi','3\pi/2','2\pi'});
+
+theta = -(N-1)/2*w;
+A = H./exp(1i*theta);
+figure(3);
+plot(w,A);
+title('Amplitude function A(\omega)');
+xlabel('\omega');
+ylabel('A(\omega)');
+xlim([0,2*pi]);
+set(gca,'XTick',0:pi/2:2*pi);
+set(gca,'XTickLabel',{'0','\pi/2','\pi','3\pi/2','2\pi'});
+figure(4);
+plot(w,theta);
+title('Phase function \theta(\omega)');
+xlabel('\omega');
+ylabel('\theta(\omega)');
+xlim([0,2*pi]);
+set(gca,'XTick',0:pi/2:2*pi);
+set(gca,'XTickLabel',{'0','\pi/2','\pi','3\pi/2','2\pi'});
+
+Hz = tf(hn,1,-1,'Variable','z^-1');
+[p,z] = pzmap(Hz);
+figure(5);
+pzmap(Hz);
+axis equal;
+
+M = (N-1)/2;
+Ak = A(1+(600/N)*n);
+h_n = (Ak(1) + sum(2*Ak(2:N/2).*cos(2*pi*(n-M)'.*(1:N/2-1)/N),2))/N;
